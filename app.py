@@ -40,11 +40,3 @@ if st.session_state.cookie_consent is None:
 
 # Render Studio Content Panel Instantly
 ui_layout.render_studio()
-t.markdown("""
-    <style>
-    /* सिर्फ उन गहरे कमेंट वाले बॉक्स का टेक्स्ट सफेद करेगा */
-    div[data-testid="stMarkdownContainer"] div {
-        color: white !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
