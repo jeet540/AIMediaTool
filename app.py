@@ -31,7 +31,7 @@ if st.session_state.cookie_consent is None:
         if st.button("ACCEPT ALL COOKIES"):
             st.session_state.cookie_consent = "accepted"
             with open(cookie_lock_file, "w") as f: f.write(f"accepted,{time.time()}")
-            st.experimental_rerun()
+            st.rerun()
     with b2:
         if st.button("REJECT ALL"):
             st.session_state.cookie_consent = "rejected"
