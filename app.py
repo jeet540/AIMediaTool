@@ -40,13 +40,3 @@ if st.session_state.cookie_consent is None:
 
 # Render Studio Content Panel Instantly
 ui_layout.render_studio()
-st.markdown("""
-    <style>
-    div[data-testid="stMarkdownContainer"] {
-        background-color: white !important;
-        color: black !important;
-        padding: 10px;
-        border-radius: 5px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
