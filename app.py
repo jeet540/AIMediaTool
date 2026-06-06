@@ -40,13 +40,3 @@ if st.session_state.cookie_consent is None:
 
 # Render Studio Content Panel Instantly
 ui_layout.render_studio()
-st.markdown("""
-    <style>
-    div[data-testid="stExpander"], div[class*="st-"] {
-        color: white !important;
-    }
-    div[class*="st-"] {
-        background-color: transparent !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
