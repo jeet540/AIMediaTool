@@ -40,14 +40,10 @@ if st.session_state.cookie_consent is None:
 
 # Render Studio Content Panel Instantly
 ui_layout.render_studio()
-st.markdown("""
+t.markdown("""
     <style>
-    /* केवल इन अलर्ट बॉक्स के अंदर के टेक्स्ट को सफेद करेगा */
-    div[data-testid="stAlert"] div {
-        color: white !important;
-    }
-    /* अगर ये st.info या st.success नहीं हैं, तो यह हर उस जगह काम करेगा जहाँ काला बैकग्राउंड है */
-    div[style*="background-color: rgb(26, 28, 36)"] {
+    /* सिर्फ उन गहरे कमेंट वाले बॉक्स का टेक्स्ट सफेद करेगा */
+    div[data-testid="stMarkdownContainer"] div {
         color: white !important;
     }
     </style>
