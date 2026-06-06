@@ -1,6 +1,10 @@
 ﻿import streamlit as st, os, time
 st.set_page_config(page_title="AI Smart Media Studio", layout="wide")
-
+st.markdown("""
+    <style>
+    p, div { color: white !important; }
+    </style>
+    """, unsafe_allow_html=True)
 # Google AdSense Script Integration
 st.markdown('<script async src="https://googlesyndication.com" crossorigin="anonymous"></script><meta name="google-adsense-account" content="ca-pub-3995974960275140">', unsafe_allow_html=True)
 
