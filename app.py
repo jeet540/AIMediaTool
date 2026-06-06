@@ -40,3 +40,16 @@ if st.session_state.cookie_consent is None:
 
 # Render Studio Content Panel Instantly
 ui_layout.render_studio()
+st.markdown("""
+    <style>
+    /* उन गहरे बॉक्स के टेक्स्ट को जबरदस्ती सफेद करना */
+    div[data-testid="stMarkdownContainer"] p, 
+    div[data-testid="stMarkdownContainer"] div {
+        color: #ffffff !important;
+    }
+    /* अगर बॉक्स का बैकग्राउंड बहुत ज्यादा काला है, तो उसे थोड़ा हल्का करना */
+    div[class*="st-"] {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
