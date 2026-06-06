@@ -1,4 +1,5 @@
-﻿import streamlit as st, moviepy.editor as mp, numpy as np, scipy.io.wavfile as wavfile, soundfile as sf, os, time
+﻿import streamlit as st, moviepy.editor as mp, numpy as np, soundfile as sf, os, time
+from scipy.io import wavfile
 
 def save_file(uf, tp):
     try:
