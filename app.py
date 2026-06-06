@@ -42,14 +42,13 @@ if st.session_state.cookie_consent is None:
 ui_layout.render_studio()
 st.markdown("""
     <style>
-    /* उन गहरे बॉक्स के टेक्स्ट को जबरदस्ती सफेद करना */
-    div[data-testid="stMarkdownContainer"] p, 
-    div[data-testid="stMarkdownContainer"] div {
-        color: #ffffff !important;
+    /* केवल इन अलर्ट बॉक्स के अंदर के टेक्स्ट को सफेद करेगा */
+    div[data-testid="stAlert"] div {
+        color: white !important;
     }
-    /* अगर बॉक्स का बैकग्राउंड बहुत ज्यादा काला है, तो उसे थोड़ा हल्का करना */
-    div[class*="st-"] {
-        background-color: rgba(255, 255, 255, 0.05) !important;
+    /* अगर ये st.info या st.success नहीं हैं, तो यह हर उस जगह काम करेगा जहाँ काला बैकग्राउंड है */
+    div[style*="background-color: rgb(26, 28, 36)"] {
+        color: white !important;
     }
     </style>
     """, unsafe_allow_html=True)
