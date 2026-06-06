@@ -1,5 +1,7 @@
-﻿import streamlit as st, moviepy.editor as mp, numpy as np, soundfile as sf, os, time
-from scipy.io import wavfiledef save_file(uf, tp):
+import streamlit as st, moviepy.editor as mp, numpy as np, soundfile as sf, os, time
+from scipy.io import wavfile
+
+def save_file(uf, tp):
     try:
         with open(tp, "wb") as f:
             while True:
@@ -18,7 +20,6 @@ def to_wav(in_p, out_p):
     except Exception: return False
 
 def run_workspace(option):
-    st.markdown('<div class="workspace-box">', unsafe_allow_html=True)
     t_id = int(time.time())
     
     if option == "AI VOICE CHANGER":
@@ -27,38 +28,42 @@ def run_workspace(option):
         if uf:
             st.success("✅ Uploaded!"); st.audio(uf)
             r, w, o = f"r_{t_id}.tmp", f"w_{t_id}.wav", f"o_{t_id}.wav"
-            if save_file(uf, r) and st.button("EXECUTE TRANSFORMATION"):
+            if save_file(uf, r):
                 eff = st.radio("Select Effect:", ["High Pitch (Female Style)", "Low Pitch (Robot Style)"])
-                if to_wav(r, w):
-                    try:
-                        d, sr = sf.read(w); nsr = int(sr * 0.7) if eff == "High Pitch (Female Style)" else int(sr * 1.4)
-                        sf.write(o, d, nsr); st.success("✅ Complete!"); st.audio(o)
-                        with open(o, "rb") as f: st.download_button("📥 DOWNLOAD VOICE", f, file_name="voice.wav")
-                    except Exception as e: st.error(f"Error: {e}")
-            for f in [r, w, o]: 
+                if st.button("EXECUTE TRANSFORMATION"):
+                    if to_wav(r, w):
+                        try:
+                            d, sr = sf.read(w)
+                            nsr = int(sr * 0.7) if eff == "High Pitch (Female Style)" else int(sr * 1.4)
+                            sf.write(o, d, nsr)
+                            st.success("✅ Complete!"); st.audio(o)
+                            with open(o, "rb") as f: st.download_button("📥 DOWNLOAD VOICE", f, file_name="voice.wav")
+                        except Exception as e: st.error(f"Error: {e}")
+            for f in [r, w, o]:
                 if os.path.exists(f): os.remove(f)
-
+                
     elif option == "AUDIO NOISE CLEANER":
         st.markdown("### AI Background Noise Cleaner & Enhancer")
-        uf = st.file_uploader("Upload Audio/Video to Clean Noise", type=None, key="n1")
+        uf = st.file_uploader("Upload Audio to Clean Noise", type=None, key="n1")
         if uf:
             st.success("✅ Uploaded!"); st.audio(uf)
             r, w, o = f"r_{t_id}.tmp", f"w_{t_id}.wav", f"o_{t_id}.wav"
-            nst = st.slider("Noise Reduction Strength (%):", 20, 100, 70, 5)
-            ven = st.slider("Voice Clarity (Boost dB):", 1.0, 3.0, 1.5, 0.5)
+            nst = st.slider("Noise Strength (%):", 20, 100, 70, 5, key="nst_aud")
+            ven = st.slider("Voice Clarity (Boost dB):", 1.0, 3.0, 1.5, 0.5, key="ven_aud")
             if save_file(uf, r) and st.button("CLEAN BACKGROUND NOISE NOW"):
                 if to_wav(r, w):
                     try:
                         rate, d = wavfile.read(w)
-                        if len(d.shape) > 1: d = d.mean(axis=1)
+                        d = d.mean(axis=1) if len(d.shape) > 1 else d
                         lim = np.median(np.abs(d)) * (nst / 100.0)
                         c_d = np.clip(np.where(np.abs(d) < lim, d * (1.0 - (nst / 100.0)), d) * ven, -32768, 32767)
-                        wavfile.write(o, rate, c_d.astype(np.int16)); st.success("✅ Studio Clean Successful!"); st.audio(o)
+                        wavfile.write(o, rate, c_d.astype(np.int16))
+                        st.success("✅ Studio Clean Successful!"); st.audio(o)
                         with open(o, "rb") as f: st.download_button("📥 DOWNLOAD CLEAN AUDIO", f, file_name="clean.wav")
                     except Exception as e: st.error(f"Error: {e}")
-            for f in [r, w, o]: 
+            for f in [r, w, o]:
                 if os.path.exists(f): os.remove(f)
-
+                
     elif option == "VIDEO TO MP3 CONVERTER":
         st.markdown("### Video to MP3 Extraction Workspace")
         uf = st.file_uploader("Upload Video File", type=None, key="vm1")
@@ -69,15 +74,15 @@ def run_workspace(option):
                 try:
                     vid = mp.VideoFileClip(r)
                     if vid.audio:
-                        vid.audio.write_audiofile(o, codec='mp3', logger=None); st.success("✅ Extracted!"); st.audio(o)
+                        vid.audio.write_audiofile(o, codec='mp3', logger=None)
+                        st.success("✅ Extracted!"); st.audio(o)
                         with open(o, "rb") as f: st.download_button("📥 DOWNLOAD MP3", f, file_name="audio.mp3")
                     else: st.error("No audio found!")
                     vid.close()
                 except Exception as e: st.error(f"Error: {e}")
-                finally: 
-                    if os.path.exists(r): os.remove(r)
-                    if os.path.exists(o): os.remove(o)
-
+            for f in [r, o]:
+                if os.path.exists(f): os.remove(f)
+                
     elif option == "SMART VIDEO CUTTER":
         st.markdown("### Professional Video Trimmer Workspace")
         uf = st.file_uploader("Upload Video (.mp4)", type=None, key="vc1")
@@ -86,22 +91,23 @@ def run_workspace(option):
             r, o = f"r_{t_id}.tmp", f"o_{t_id}.mp4"
             if save_file(uf, r):
                 try:
-                    vid = mp.VideoFileClip(r); st.info(f"Duration: {vid.duration:.2f}s")
+                    vid = mp.VideoFileClip(r)
+                    st.info(f"Duration: {vid.duration:.2f}s")
                     start = st.number_input("Start (s)", min_value=0.0, max_value=float(vid.duration), value=0.0)
                     end = st.number_input("End (s)", min_value=0.0, max_value=float(vid.duration), value=float(vid.duration))
                     if st.button("TRIM MEDIA TIMELINE"):
                         if start >= end: st.error("Start must be less than End!")
                         else:
                             with st.spinner("Trimming..."):
-                                trm = vid.subclip(start, end); trm.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", logger=None)
+                                trm = vid.subclip(start, end)
+                                trm.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", logger=None)
                                 st.success("✅ Trimmed!"); st.video(o)
                                 with open(o, "rb") as f: st.download_button("📥 DOWNLOAD VIDEO", f, file_name="trimmed.mp4")
                     vid.close()
                 except Exception as e: st.error(f"Error: {e}")
-                finally:
-                    if os.path.exists(r): os.remove(r)
-                    if os.path.exists(o): os.remove(o)
-
+            for f in [r, o]:
+                if os.path.exists(f): os.remove(f)
+                
     elif option == "AI VIDEO SPEED CONTROLLER":
         st.markdown("### AI Video Speed Ramp Workspace")
         uf = st.file_uploader("Upload Video for Speed Effect", type=None, key="vs1")
@@ -111,16 +117,16 @@ def run_workspace(option):
             spd = st.slider("Select Speed Multiplier:", 0.5, 2.0, 1.0, 0.25)
             if save_file(uf, r) and st.button("APPLY SPEED EFFECT"):
                 try:
-                    vid = mp.VideoFileClip(r); m_vid = vid.fx(mp.vfx.speedx, spd)
+                    vid = mp.VideoFileClip(r)
+                    m_vid = vid.fx(mp.vfx.speedx, spd)
                     m_vid.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", logger=None)
                     st.success("✅ Speed Changed!"); st.video(o)
                     with open(o, "rb") as f: st.download_button("📥 DOWNLOAD SPEED VIDEO", f, file_name="speed.mp4")
                     vid.close()
                 except Exception as e: st.error(f"Error: {e}")
-                finally:
-                    if os.path.exists(r): os.remove(r)
-                    if os.path.exists(o): os.remove(o)
-
+            for f in [r, o]:
+                if os.path.exists(f): os.remove(f)
+                
     elif option == "AI AUDIO BASS BOOSTER":
         st.markdown("### AI Audio Bass Booster Workspace")
         uf = st.file_uploader("Upload Video/Audio to Boost Bass", type=None, key="b1")
@@ -131,11 +137,39 @@ def run_workspace(option):
             if save_file(uf, r) and st.button("BOOST AUDIO BASS"):
                 if to_wav(r, w):
                     try:
-                        rate, d = wavfile.read(w); b_d = np.clip(d * bst, -32768, 32767)
-                        wavfile.write(o, rate, b_d.astype(np.int16)); st.success("✅ Bass Boost Applied!"); st.audio(o)
+                        rate, d = wavfile.read(w)
+                        b_d = np.clip(d * bst, -32768, 32767)
+                        wavfile.write(o, rate, b_d.astype(np.int16))
+                        st.success("✅ Bass Boost Applied!"); st.audio(o)
                         with open(o, "rb") as f: st.download_button("📥 DOWNLOAD BASS AUDIO", f, file_name="bass.wav")
                     except Exception as e: st.error(f"Error: {e}")
-            for f in [r, w, o]: 
+            for f in [r, w, o]:
                 if os.path.exists(f): os.remove(f)
-                        
-    st.markdown('</div>', unsafe_allow_html=True)
+                
+    elif option == "VIDEO NOISE CLEANER":
+        st.markdown("### AI Video Noise Cleaner Workspace")
+        uf = st.file_uploader("Upload Video to Clean Noise", type=None, key="vn1")
+        if uf:
+            st.success("✅ Uploaded!"); st.video(uf)
+            r, w, a, o = f"r_{t_id}.tmp", f"w_{t_id}.wav", f"a_{t_id}.wav", f"o_{t_id}.mp4"
+            nst = st.slider("Video Denoise Strength (%):", 20, 100, 70, 5, key="nst_vid")
+            ven = st.slider("Video Audio Clarity (Boost dB):", 1.0, 3.0, 1.5, 0.5, key="ven_vid")
+            if save_file(uf, r) and st.button("CLEAN VIDEO NOISE NOW"):
+                with st.spinner("AI Cleaning Media Stream..."):
+                    if to_wav(r, w):
+                        try:
+                            rate, d = wavfile.read(w)
+                            d = d.mean(axis=1) if len(d.shape) > 1 else d
+                            lim = np.median(np.abs(d)) * (nst / 100.0)
+                            c_d = np.clip(np.where(np.abs(d) < lim, d * (1.0 - (nst / 100.0)), d) * ven, -32768, 32767)
+                            wavfile.write(a, rate, c_d.astype(np.int16))
+                            vid = mp.VideoFileClip(r)
+                            aud = mp.AudioFileClip(a)
+                            m_vid = vid.set_audio(aud)
+                            m_vid.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", logger=None)
+                            st.success("✅ Video Denoise Complete!"); st.video(o)
+                            with open(o, "rb") as f: st.download_button("📥 DOWNLOAD CLEAN VIDEO", f, file_name="denoised.mp4")
+                            vid.close(); aud.close()
+                        except Exception as e: st.error(f"Error: {e}")
+            for f in [r, w, a, o]:
+                if os.path.exists(f): os.remove(f)
