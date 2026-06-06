@@ -1,6 +1,6 @@
 streamlit
 pyarrow
-moviepy==2.0.0
+moviepy==1.0.3
 scipy
 soundfile
 numpy
