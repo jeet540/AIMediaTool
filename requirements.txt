@@ -1,0 +1,5 @@
+streamlit
+pyarrow
+moviepy
+scipy
+soundfile
