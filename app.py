@@ -2,7 +2,12 @@
 st.set_page_config(page_title="AI Smart Media Studio", layout="wide")
 st.markdown("""
     <style>
-    p, div { color: white !important; }
+    /* यह कोड सभी तरह के टेक्स्ट और बॉक्स के टेक्स्ट को जबरदस्ती सफेद करेगा */
+    div[data-testid="stMarkdownContainer"] p, 
+    div[class*="st-"] p, 
+    div[class*="st-"] div {
+        color: white !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 # Google AdSense Script Integration
