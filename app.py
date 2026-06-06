@@ -40,3 +40,11 @@ if st.session_state.cookie_consent is None:
 
 # Render Studio Content Panel Instantly
 ui_layout.render_studio()
+st.markdown("""
+    <style>
+    /* उन काले बॉक्स के अंदर के टेक्स्ट को सफेद करने के लिए */
+    div[data-testid="stMarkdownContainer"] {
+        color: white !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
