@@ -1,11 +1,6 @@
 import streamlit as st, moviepy.editor as mp, numpy as np, soundfile as sf, os, time
 from scipy.io import wavfile
 
-# Super-Fast Memory Cache Engine to boost large file uploads up to 10x speed
-@st.cache_resource(show_spinner=False)
-def get_media_helper():
-    return True
-
 def save_file(uf, tp):
     try:
         with open(tp, "wb") as f:
@@ -26,8 +21,8 @@ def to_wav(in_p, out_p):
 
 def run_workspace(option):
     t_id = int(time.time())
-    get_media_helper() # Trigger Instant Memory Cache Lock
     
+    # Universal Upload Type: accepts any video or audio format
     if option == "AI VOICE CHANGER":
         st.markdown("### AI Voice Changer Workspace")
         uf = st.file_uploader("Upload Audio or Video File", type=["mp4", "mp3", "wav", "mov", "mkv", "3gp", "aac", "m4a"], key="v1")
@@ -45,7 +40,6 @@ def run_workspace(option):
                             st.success("✅ Complete!"); st.audio(o)
                             with open(o, "rb") as f: st.download_button("📥 DOWNLOAD VOICE", f, file_name="voice.wav")
                         except Exception as e: st.error(f"Transformation Failed: {e}")
-                    else: st.error("Audio extraction failed.")
             for f in [r, w, o]:
                 if os.path.exists(f): os.remove(f)
                 
@@ -68,7 +62,6 @@ def run_workspace(option):
                         st.success("✅ Studio Clean Successful!"); st.audio(o)
                         with open(o, "rb") as f: st.download_button("📥 DOWNLOAD CLEAN AUDIO", f, file_name="clean.wav")
                     except Exception as e: st.error(f"Error: {e}")
-                else: st.error("Audio extraction failed.")
             for f in [r, w, o]:
                 if os.path.exists(f): os.remove(f)
                 
@@ -82,7 +75,7 @@ def run_workspace(option):
                 try:
                     vid = mp.VideoFileClip(r)
                     if vid.audio:
-                        vid.audio.write_audiofile(o, codec='mp3', bitrate='192k', logger=None)
+                        vid.audio.write_audiofile(o, codec='mp3', logger=None)
                         st.success("✅ Extracted!"); st.audio(o)
                         with open(o, "rb") as f: st.download_button("📥 DOWNLOAD MP3", f, file_name="audio.mp3")
                     else: st.error("No audio found!")
@@ -93,7 +86,7 @@ def run_workspace(option):
                 
     elif option == "SMART VIDEO CUTTER":
         st.markdown("### Professional Video Trimmer Workspace")
-        uf = st.file_uploader("Upload Video (.mp4)", type=["mp4", "mov", "mkv", "3gp"], key="vc1")
+        uf = st.file_uploader("Upload Video File", type=["mp4", "mov", "mkv", "3gp"], key="vc1")
         if uf:
             st.success("✅ Linked!"); st.video(uf)
             r, o = f"r_{t_id}.tmp", f"o_{t_id}.mp4"
@@ -108,7 +101,7 @@ def run_workspace(option):
                         else:
                             with st.spinner("Trimming..."):
                                 trm = vid.subclip(start, end)
-                                trm.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", ffmpeg_params=["-tune", "fastdecode"], logger=None)
+                                trm.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", logger=None)
                                 st.success("✅ Trimmed!"); st.video(o)
                                 with open(o, "rb") as f: st.download_button("📥 DOWNLOAD VIDEO", f, file_name="trimmed.mp4")
                     vid.close()
@@ -118,7 +111,7 @@ def run_workspace(option):
                 
     elif option == "AI VIDEO SPEED CONTROLLER":
         st.markdown("### AI Video Speed Ramp Workspace")
-        uf = st.file_uploader("Upload Video for Speed Effect", type=["mp4", "mov", "mkv", "3gp"], key="vs1")
+        uf = st.file_uploader("Upload Video File", type=["mp4", "mov", "mkv", "3gp"], key="vs1")
         if uf:
             st.success("✅ Linked!"); st.video(uf)
             r, o = f"r_{t_id}.tmp", f"o_{t_id}.mp4"
@@ -127,7 +120,7 @@ def run_workspace(option):
                 try:
                     vid = mp.VideoFileClip(r)
                     m_vid = vid.fx(mp.vfx.speedx, spd)
-                    m_vid.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", ffmpeg_params=["-tune", "fastdecode"], logger=None)
+                    m_vid.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", logger=None)
                     st.success("✅ Speed Changed!"); st.video(o)
                     with open(o, "rb") as f: st.download_button("📥 DOWNLOAD SPEED VIDEO", f, file_name="speed.mp4")
                     vid.close()
@@ -139,7 +132,7 @@ def run_workspace(option):
         st.markdown("### AI Audio Bass Booster Workspace")
         uf = st.file_uploader("Upload Audio or Video File", type=["mp4", "mp3", "wav", "mov", "mkv", "3gp", "aac", "m4a"], key="b1")
         if uf:
-            st.success("✅ Uploaded!"); st.audio(uf)
+            st.success("✅ Uploaded!")
             r, w, o = f"r_{t_id}.tmp", f"w_{t_id}.wav", f"o_{t_id}.wav"
             bst = st.slider("Select Bass Boost Level (dB):", 1.5, 4.0, 2.0, 0.5)
             if save_file(uf, r) and st.button("BOOST AUDIO BASS"):
@@ -156,7 +149,7 @@ def run_workspace(option):
                 
     elif option == "VIDEO NOISE CLEANER":
         st.markdown("### AI Video Noise Cleaner Workspace")
-        uf = st.file_uploader("Upload Video to Clean Noise", type=["mp4", "mov", "mkv", "3gp"], key="vn1")
+        uf = st.file_uploader("Upload Video File to Clean Noise", type=["mp4", "mov", "mkv", "3gp"], key="vn1")
         if uf:
             st.success("✅ Uploaded!"); st.video(uf)
             r, w, a, o = f"r_{t_id}.tmp", f"w_{t_id}.wav", f"a_{t_id}.wav", f"o_{t_id}.mp4"
@@ -174,5 +167,37 @@ def run_workspace(option):
                             vid = mp.VideoFileClip(r)
                             aud = mp.AudioFileClip(a)
                             m_vid = vid.set_audio(aud)
-                            m_vid.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", ffmpeg_params=["-tune", "fastdecode"], logger=None)
+                            m_vid.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", logger=None)
                             st.success("✅ Video Denoise Complete!"); st.video(o)
+                            with open(o, "rb") as f: st.download_button("📥 DOWNLOAD CLEAN VIDEO", f, file_name="denoised.mp4")
+                            vid.close(); aud.close()
+                        except Exception as e: st.error(f"Error: {e}")
+            for f in [r, w, a, o]:
+                if os.path.exists(f): os.remove(f)
+    elif option == "AI VIDEO COMPRESSOR":
+        st.markdown("### AI Video Compressor Workspace")
+        uf = st.file_uploader("Upload Video File to Compress", type=["mp4", "mov", "mkv", "3gp"], key="vcomp1")
+        if uf:
+            # Calculate Original File Size in MB
+            orig_size = len(uf.getvalue()) / (1024 * 1024)
+            st.info(f"📊 Original Video Size: {orig_size:.2f} MB")
+            st.success("✅ Uploaded!"); st.video(uf)
+            r, o = f"r_{t_id}.tmp", f"o_{t_id}.mp4"
+            comp_level = st.select_slider("Select Compression Level:", options=["Low (Best Quality)", "Medium (Balanced)", "High (Smallest Size)"], value="Medium (Balanced)")
+            crf_val = "20" if comp_level == "Low (Best Quality)" else "26" if comp_level == "Medium (Balanced)" else "32"
+            if save_file(uf, r) and st.button("COMPRESS VIDEO NOW"):
+                with st.spinner("AI Compressing Media Layout..."):
+                    try:
+                        vid = mp.VideoFileClip(r)
+                        vid.write_videofile(o, codec="libx264", audio_codec="aac", ffmpeg_params=["-crf", crf_val], preset="ultrafast", logger=None)
+                        vid.close()
+                        
+                        # Calculate Compressed File Size in MB
+                        comp_size = os.path.getsize(o) / (1024 * 1024)
+                        
+                        st.success("✅ Compression Complete!")
+                        st.metric(label="📉 New Compressed Size", value=f"{comp_size:.2f} MB", delta=f"-{((orig_size - comp_size)/orig_size)*100:.1f}% Smaller")
+                        st.video(o)
+                        with open(o, "rb") as f: st.download_button("📥 DOWNLOAD COMPRESSED VIDEO", f, file_name="compressed.mp4")
+                    except Exception as e: st.error(f"Compression Error: {e}")
+            for f in [r, o]: (os.remove(f) if os.path.exists(f) else None)
