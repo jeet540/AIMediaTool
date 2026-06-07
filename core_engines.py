@@ -174,7 +174,7 @@ def run_workspace(option):
                         except Exception as e: st.error(f"Error: {e}")
             for f in [r, w, a, o]:
                 if os.path.exists(f): os.remove(f)
-   elif option == "AI VIDEO COMPRESSOR":
+    elif option == "AI VIDEO COMPRESSOR":
         st.markdown("### AI Video Compressor Workspace")
         uf = st.file_uploader("Upload Video File to Compress", type=["mp4", "mov", "mkv", "3gp"], key="vcomp1")
         if uf:
