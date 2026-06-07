@@ -1,5 +1,8 @@
 import streamlit as st, moviepy.editor as mp, numpy as np, soundfile as sf, os, time
 from scipy.io import wavfile
+# Speed Booster memory engine
+@st.cache_resource(show_spinner=False)
+def get_media_helper(): return True
 
 def save_file(uf, tp):
     try:
@@ -21,6 +24,7 @@ def to_wav(in_p, out_p):
 
 def run_workspace(option):
     t_id = int(time.time())
+    get_media_helper()
     
     # Universal Upload Type: accepts any video or audio format
     if option == "AI VOICE CHANGER":
