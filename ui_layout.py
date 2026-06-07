@@ -23,11 +23,11 @@ def render_studio():
     st.markdown('<div class="studio-title">AI SMART MEDIA STUDIO</div>', unsafe_allow_html=True)
     st.markdown('<div class="studio-subtitle">Professional CapCut-Style Multi-Engine • Limit: 1000MB</div>', unsafe_allow_html=True)
     
-    option = st.sidebar.radio("CHOOSE ACTIVE ENGINE:", ["AI VOICE CHANGER", "AUDIO NOISE CLEANER", "VIDEO TO MP3 CONVERTER", "SMART VIDEO CUTTER", "AI VIDEO SPEED CONTROLLER", "AI AUDIO BASS BOOSTER", "VIDEO NOISE CLEANER"])
+    option = st.sidebar.radio("CHOOSE ACTIVE ENGINE:", ["AI VOICE CHANGER", "AUDIO NOISE CLEANER", "VIDEO TO MP3 CONVERTER", "SMART VIDEO CUTTER", "AI VIDEO SPEED CONTROLLER", "AI AUDIO BASS BOOSTER", "VIDEO NOISE CLEANER", "AI VIDEO COMPRESSOR"])
     legal_option = st.sidebar.selectbox("VIEW LEGAL PAGES:", ["NONE - SHOW STUDIO WORKSPACE", "ABOUT US", "PRIVACY POLICY", "COOKIES & TERMS"])
     
     st.markdown('<div class="canvas-container">', unsafe_allow_html=True)
-    t_list = [("Voice Changer", "Shift pitch easily.", "AI VOICE CHANGER"), ("Noise Cleaner", "Remove audio hiss.", "AUDIO NOISE CLEANER"), ("Video To MP3", "Extract clear track.", "VIDEO TO MP3 CONVERTER"), ("Video Cutter", "Trim clips fast.", "SMART VIDEO CUTTER"), ("Speed Control", "Slow-mo & Fast.", "AI VIDEO SPEED CONTROLLER"), ("Bass Booster", "Boost frequencies.", "AI AUDIO BASS BOOSTER"), ("Video Denoise", "Clean video noise.", "VIDEO NOISE CLEANER")]
+    t_list = [("Voice Changer", "Shift pitch easily.", "AI VOICE CHANGER"), ("Noise Cleaner", "Remove audio hiss.", "AUDIO NOISE CLEANER"), ("Video To MP3", "Extract clear track.", "VIDEO TO MP3 CONVERTER"), ("Video Cutter", "Trim clips fast.", "SMART VIDEO CUTTER"), ("Speed Control", "Slow-mo & Fast.", "AI VIDEO SPEED CONTROLLER"), ("Bass Booster", "Boost frequencies.", "AI AUDIO BASS BOOSTER"), ("Video Denoise", "Clean video noise.", "VIDEO NOISE CLEANER"), ("Video Compress", "Reduce file size.", "AI VIDEO COMPRESSOR")]
     for title, desc, key in t_list:
         c_style = "tool-card-active" if (option == key and legal_option == "NONE - SHOW STUDIO WORKSPACE") else "tool-card-inactive"
         st.markdown(f'<div class="{c_style}"><div class="card-title">{title}</div><div class="card-desc">{desc}</div></div>', unsafe_allow_html=True)
