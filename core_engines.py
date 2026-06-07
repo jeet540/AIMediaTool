@@ -174,10 +174,13 @@ def run_workspace(option):
                         except Exception as e: st.error(f"Error: {e}")
             for f in [r, w, a, o]:
                 if os.path.exists(f): os.remove(f)
-    elif option == "AI VIDEO COMPRESSOR":
+   elif option == "AI VIDEO COMPRESSOR":
         st.markdown("### AI Video Compressor Workspace")
         uf = st.file_uploader("Upload Video File to Compress", type=["mp4", "mov", "mkv", "3gp"], key="vcomp1")
         if uf:
+            # Calculate Original File Size in MB
+            orig_size = len(uf.getvalue()) / (1024 * 1024)
+            st.info(f"📊 Original Video Size: {orig_size:.2f} MB")
             st.success("✅ Uploaded!"); st.video(uf)
             r, o = f"r_{t_id}.tmp", f"o_{t_id}.mp4"
             comp_level = st.select_slider("Select Compression Level:", options=["Low (Best Quality)", "Medium (Balanced)", "High (Smallest Size)"], value="Medium (Balanced)")
@@ -187,8 +190,14 @@ def run_workspace(option):
                     try:
                         vid = mp.VideoFileClip(r)
                         vid.write_videofile(o, codec="libx264", audio_codec="aac", ffmpeg_params=["-crf", crf_val], preset="ultrafast", logger=None)
-                        st.success("✅ Compression Complete!"); st.video(o)
-                        with open(o, "rb") as f: st.download_button("📥 DOWNLOAD COMPRESSED VIDEO", f, file_name="compressed.mp4")
                         vid.close()
+                        
+                        # Calculate Compressed File Size in MB
+                        comp_size = os.path.getsize(o) / (1024 * 1024)
+                        
+                        st.success("✅ Compression Complete!")
+                        st.metric(label="📉 New Compressed Size", value=f"{comp_size:.2f} MB", delta=f"-{((orig_size - comp_size)/orig_size)*100:.1f}% Smaller")
+                        st.video(o)
+                        with open(o, "rb") as f: st.download_button("📥 DOWNLOAD COMPRESSED VIDEO", f, file_name="compressed.mp4")
                     except Exception as e: st.error(f"Compression Error: {e}")
             for f in [r, o]: (os.remove(f) if os.path.exists(f) else None)
