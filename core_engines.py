@@ -4,7 +4,7 @@ from scipy.io import wavfile
 # Super-Fast Memory Cache Engine to boost large file uploads up to 10x speed
 @st.cache_resource(show_spinner=False)
 def get_media_helper():
-    return True
+return True
 
 def save_file(uf, tp):
     try:
