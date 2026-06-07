@@ -4,7 +4,7 @@ from scipy.io import wavfile
 # Super-Fast Memory Cache Engine to boost large file uploads up to 10x speed
 @st.cache_resource(show_spinner=False)
 def get_media_helper():
-return True
+    return True
 
 def save_file(uf, tp):
     try:
@@ -108,7 +108,6 @@ def run_workspace(option):
                         else:
                             with st.spinner("Trimming..."):
                                 trm = vid.subclip(start, end)
-                                # Turbo stream copy mode to skip re-rendering entirely
                                 trm.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", ffmpeg_params=["-tune", "fastdecode"], logger=None)
                                 st.success("✅ Trimmed!"); st.video(o)
                                 with open(o, "rb") as f: st.download_button("📥 DOWNLOAD VIDEO", f, file_name="trimmed.mp4")
@@ -176,3 +175,4 @@ def run_workspace(option):
                             aud = mp.AudioFileClip(a)
                             m_vid = vid.set_audio(aud)
                             m_vid.write_videofile(o, codec="libx264", audio_codec="aac", preset="ultrafast", ffmpeg_params=["-tune", "fastdecode"], logger=None)
+                            st.success("✅ Video Denoise Complete!"); st.video(o)
