@@ -174,3 +174,21 @@ def run_workspace(option):
                         except Exception as e: st.error(f"Error: {e}")
             for f in [r, w, a, o]:
                 if os.path.exists(f): os.remove(f)
+elif option == "AI VIDEO COMPRESSOR":
+        st.markdown("### AI Video Compressor Workspace")
+        uf = st.file_uploader("Upload Video File to Compress", type=["mp4", "mov", "mkv", "3gp"], key="vcomp1")
+        if uf:
+            st.success("✅ Uploaded!"); st.video(uf)
+            r, o = f"r_{t_id}.tmp", f"o_{t_id}.mp4"
+            comp_level = st.select_slider("Select Compression Level:", options=["Low (Best Quality)", "Medium (Balanced)", "High (Smallest Size)"], value="Medium (Balanced)")
+            crf_val = "20" if comp_level == "Low (Best Quality)" else "26" if comp_level == "Medium (Balanced)" else "32"
+            if save_file(uf, r) and st.button("COMPRESS VIDEO NOW"):
+                with st.spinner("AI Compressing Media Layout..."):
+                    try:
+                        vid = mp.VideoFileClip(r)
+                        vid.write_videofile(o, codec="libx264", audio_codec="aac", ffmpeg_params=["-crf", crf_val], preset="ultrafast", logger=None)
+                        st.success("✅ Compression Complete!"); st.video(o)
+                        with open(o, "rb") as f: st.download_button("📥 DOWNLOAD COMPRESSED VIDEO", f, file_name="compressed.mp4")
+                        vid.close()
+                    except Exception as e: st.error(f"Compression Error: {e}")
+            for f in [r, o]: (os.remove(f) if os.path.exists(f) else None)
